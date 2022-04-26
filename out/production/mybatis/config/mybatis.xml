@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <properties resource="config/dbconfig.properties"/>
+    <plugins>
+        <plugin interceptor="com.gg.mybatis.plug.MyFirstPlug">
+            <property name="自立" value="自强"/>
+            <property name="10" value="50"/>
+        </plugin>
+    </plugins>
+    <environments default="mysql">
+        <environment id="mysql">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+    
+
+    <mappers>
+        <mapper resource="config/mapper/EmployeeMapper.xml"/>
+    </mappers>
+</configuration>

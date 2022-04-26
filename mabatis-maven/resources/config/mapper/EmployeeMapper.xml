@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gg.mybatis.dao.EmployeeMapper">
+    <cache eviction="FIFO" flushInterval="60000" readOnly="true" size="1024"/>
+    <resultMap id="dept" type="com.gg.mybatis.bean.Dept">
+        <id column="did" property="deptNO"/>
+        <result column="dept" property="deptName"/>
+    </resultMap>
+    <resultMap id="dept2" type="com.gg.mybatis.bean.Dept">
+        <id column="id" property="deptNO"/>
+        <result column="dept" property="deptName"/>
+    </resultMap>
+    <resultMap id="emp" type="com.gg.mybatis.bean.Employee">
+        <result column="id" property="id"/>
+        <result column="lastName" property="last_name"/>
+        <result column="email" property="gender"/>
+        <result column="gender" property="email"/>
+        <association property="dept" resultMap="dept"/>
+    </resultMap>
+    <select id="getMapOfEmp" resultType="map" useCache="true">
+        select * from tab1_employee where id = #{id}
+    </select>
+    <select id="getEmpById2" resultMap="emp" useCache="true">
+        select e.id  id, last_name lastName, gender, email, d.id did, dept
+        from tab1_employee e, tab1_dept d
+        where dept_id = d.id And e.id = #{id}
+    </select>
+
+    <select id="getEmpById" resultType="com.gg.mybatis.bean.Employee">
+        select * from tab1_employee where id=#{id}
+    </select>
+    <resultMap id="emp2" type="com.gg.mybatis.bean.Employee">
+        <result column="id" property="id"/>
+        <result column="lastName" property="last_name"/>
+        <result column="email" property="gender"/>
+        <result column="gender" property="email"/>
+        <association property="dept" select="com.gg.mybatis.dao.DeptMapper.getDeptById" column="dept_id"/>
+    </resultMap>
+    <select id="getEmpByStep" resultMap="emp2">
+        select * from tab1_employee where id = #{id}
+    </select>
+    <select id="getEmpByDeptId" resultType="com.gg.mybatis.bean.Employee">
+        select id, last_name, gender, email from tab1_employee where dept_id = #{deptI}
+    </select>
+
+
+<!-- 测试discriminator 按照条件封装   -->
+    <resultMap id="dc" type="com.gg.mybatis.bean.Employee">
+<!--        这四行不能省，即使名字是一样的-->
+        <id column="id" property="id"/>
+        <result column="last_name" property="last_name"/>
+        <result column="gender" property="gender"/>
+        <result column="email" property="email"/>
+        <discriminator javaType="string" column="gender">
+<!--            这里的resultType 起什么作用，不能省略， 前面已近声明过了-->
+            <case value="1" resultType="com.gg.mybatis.bean.Employee">
+                <association property="dept" select="com.gg.mybatis.dao.DeptMapper.getDeptById" column="dept_id"/>
+            </case>
+            <case value="0" resultType="com.gg.mybatis.bean.Employee">
+                <result column="gender" property="email"/>
+                <result column="email" property="gender"/>
+            </case>
+        </discriminator>
+    </resultMap>
+    <select id="getEmpWithDc" resultMap="dc">
+        select * from tab1_employee
+    </select>
+    <select id="getAllEmps" resultType="com.gg.mybatis.bean.Employee">
+        select * from tab1_employee
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into tab1_employee(id, last_name, gender, email, State) values(#{id}, #{last_name}, #{gender}, #{email},#{State})
+    </insert>
+</mapper>

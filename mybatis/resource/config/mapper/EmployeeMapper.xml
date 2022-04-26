@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.gg.mybatis.dao.EmployeeMapper">
+    <resultMap id="emp" type="com.gg.mybatis.bean.Employee">
+        <result column="id" property="id"/>
+        <result column="lastName" property="lastname"/>
+        <result column="email" property="gender"/>
+        <result column="gender" property="email"/>
+    </resultMap>
+
+    <select id="getAllEmps" resultMap="emp">
+        select * from tab1_employee
+    </select>
+    <select id="getEmpById" resultType="com.gg.mybatis.bean.Employee">
+        select * from tab1_employee where id = #{e.id}
+    </select>
+    <select id="getEmpByIdAndName" resultType="com.gg.mybatis.bean.Employee">
+        select * from tab1_employee where id = #{0} and last_name = #{1}
+    </select>
+    <insert id="addEmp" useGeneratedKeys="true" keyProperty="id">
+        insert into tab1_employee(last_name, gender, email) values (#{last_name}, #{gender}, #{email})
+    </insert>
+    <select id="getEmpByMap" resultType="com.gg.mybatis.bean.Employee">
+        select * from tab1_employee where id = #{id} and last_name = #{name}
+    </select>
+
+    <select id="getMapOfEmp" resultType="map">
+        select * from tab1_employee where id = #{id}
+    </select>
+</mapper>

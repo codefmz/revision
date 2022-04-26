@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <plugins>
+        <!-- 执行分析插件-->
+        <plugin interceptor="com.baomidou.mybatisplus.plugins.SqlExplainInterceptor">
+            <!-- 开启阻止 全表删除 或者 全表更新-->
+            <property name="stopProceed" value="false"/>
+        </plugin>
+        <!-- 执行性能分析插件-->
+        <plugin interceptor="com.baomidou.mybatisplus.plugins.PerformanceInterceptor">
+            <!-- 规范sql语句-->
+            <property name="format" value="true"/>
+            <!-- 最长等待时间：单位是ms-->
+            <property name="maxTime" value="5000"/>
+        </plugin>
+        <plugin interceptor="com.baomidou.mybatisplus.plugins.OptimisticLockerInterceptor"/>
+    </plugins>
+</configuration>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <!--targetRuntime : 还可以为：MyBatis3Simple,  生成简单的crud
+                    mybatis：复杂，带参数的
+    -->
+    <context id="DB2Tables" targetRuntime="MyBatis3">
+        <!--决定如何连接数据库,url不能增加批量的操作，否则会报错，没有解决-->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/mybaits?characterEncoding=utf-8"
+                        userId="root"
+                        password="fmw">
+        </jdbcConnection>
+
+        <!--java类型解析器-->
+        <javaTypeResolver >
+            <property name="forceBigDecimals" value="false" />
+        </javaTypeResolver>
+        <!--    javabean 的生成策略
+        targetPackage:目标包名
+        targetProject：工程路径
+        -->
+        <javaModelGenerator targetPackage="com.mgb.bean" targetProject=".\src">
+            <property name="enableSubPackages" value="true" />
+            <property name="trimStrings" value="true" />
+        </javaModelGenerator>
+        <!--sql映射生成策略-->
+        <sqlMapGenerator targetPackage="com.mgb.mapper"  targetProject=".\src">
+            <property name="enableSubPackages" value="true" />
+        </sqlMapGenerator>
+        <!--mapper 接口所在的位置-->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.mgb.mapper"  targetProject=".\src">
+            <property name="enableSubPackages" value="true" />
+        </javaClientGenerator>
+        <!--要逆向分析那些表,根据表创建javabean
+            domainObjectName:要生成bean的名字
+        -->
+        <table tableName="tab1_employee" domainObjectName="Employee"/>
+        <table tableName="tab1_dept" domainObjectName="Department"/>
+    </context>
+</generatorConfiguration>

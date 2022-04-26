@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gg.mybatis.dao.EmployeeMapperDynamicSql">
+
+
+    <!--        测试动态sql，使用if 更改查询条件-->
+    <!--    <select id="getEmpByIf" resultType="com.gg.mybatis.bean.Employee">
+            select * from tab1_employee where 1=1
+            <if test="id !=null">
+                and id = #{id}
+            </if>
+            <if test="gender == 1 or gender == 0">
+                and gender = #{gender}
+            </if>
+            <if test="email !=null">
+                and email = #{email}
+            </if>
+            <if test="last_name != null">
+                and last_name = #{last_name}
+            </if>
+        </select>-->
+
+    <!--        测试动态sql，使用trim -->
+    <!--   <select id="getEmpByIf" resultType="com.gg.mybatis.bean.Employee">
+           select * from tab1_employee
+           <trim prefix="where" prefixOverrides="and" suffix="and 1=1" suffixOverrides="and">
+               <if test="id !=null">
+                   and id = #{id}
+               </if>
+               <if test="gender == 1 or gender == 0">
+                   and gender = #{gender}
+               </if>
+               <if test="email !=null">
+                   and email = #{email}
+               </if>
+               <if test="last_name != null">
+                   and last_name = #{last_name}
+               </if>
+           </trim>
+       </select>-->
+
+    <!--测试使用choose when-->
+    <select id="getEmpByIf" resultType="com.gg.mybatis.bean.Employee">
+        select * from tab1_employee
+        <trim prefix="where" prefixOverrides="and" suffix="and 1=1" suffixOverrides="and">
+            <choose>
+                <when test="id != null">
+                    and id = #{id}
+                </when>
+                <when test="gender != null">
+                    <choose>
+                        <when test="gender == 1">
+                            and gender = 1
+                        </when>
+                        <otherwise>
+                            and gender = 0
+                        </otherwise>
+                    </choose>
+                </when>
+            </choose>
+        </trim>
+    </select>
+
+    <!--    set标签， 执行修改语句-->
+    <update id="updateEmp">
+        update tab1_employee
+        <trim suffixOverrides=",">
+            <set>
+                <if test="gender != null">
+                    gender = #{gender},
+                </if>
+                <if test="last_name != null">
+                    last_name = #{last_name},
+                </if>
+            </set>
+        </trim>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+
+    <!--    测试foreach-->
+    <select id="getEmpForeach" resultType="com.gg.mybatis.bean.Employee">
+        select * from tab1_employee where id
+        <foreach collection="ids" item="id" open="in (" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+
+
+    <!--    使用foreach批量保存-->
+<!--    sql 重用-->
+    <sql id="insertColumns" >
+        last_name, gender, email
+    </sql>
+    <insert id="saveBatch">
+        insert into tab1_employee(
+             <include refid="insertColumns"/>
+        )
+        <foreach collection="emps" item="emp" open="values(" close=")" separator="),(">
+            #{emp.last_name}, #{emp.gender}, #{emp.email}
+        </foreach>
+    </insert>
+    <!--测试_parameter-->
+    <select id="getEmpTestPara" resultType="com.gg.mybatis.bean.Employee">
+        <if test="_databaseId == 'mysql'">
+            select * from tab1_employee
+            <if test="_parameter != null">
+                where id = {last_name}
+            </if>
+
+        </if>
+    </select>
+
+<!--    测试bind-->
+    <select id="testBind" resultType="com.gg.mybatis.bean.Employee">
+        <bind name="lastName" value="'%' + lastName + '%'"/>
+        select * from tab1_employee where last_name like #{lastName}
+    </select>
+</mapper>

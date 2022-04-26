@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gg.mybatis.dao.DeptMapper">
+    <select id="getDeptById" resultType="com.gg.mybatis.bean.Dept">
+        select id deptNO, dept deptName from tab1_dept where id = #{id}
+    </select>
+
+    <resultMap id="deptPlus" type="com.gg.mybatis.bean.Dept">
+        <id column="deptNO" property="deptNO"/>
+        <result column="deptName" property="deptName"/>
+        <collection property="list" ofType="com.gg.mybatis.bean.Employee">
+            <result column="eid" property="id"/>
+            <result column="lastName" property="last_name"/>
+            <result column="email" property="email"/>
+            <result column="gender" property="gender"/>
+        </collection>
+    </resultMap>
+    <select id="getDeptCollection" resultMap="deptPlus">
+        SELECT d.id deptNO,  dept deptName, e.id eid, last_name lastName, email,gender
+        FROM tab1_dept d
+                 LEFT JOIN tab1_employee e
+                           ON dept_id = d.id where d.id = #{id}
+    </select>
+    <resultMap id="deptPlus2" type="com.gg.mybatis.bean.Dept">
+        <id column="deptNO" property="deptNO"/>
+        <result column="deptName" property="deptName"/>
+        <collection property="list" ofType="com.gg.mybatis.bean.Employee">
+        </collection>
+    </resultMap>
+    <select id="getDeptCollection2" resultMap="deptPlus">
+        SELECT d.id deptNO,  dept deptName, e.id id, last_name lastName, email,gender
+        FROM tab1_dept d
+                 LEFT JOIN tab1_employee e
+                           ON dept_id = d.id where d.id = #{id}
+    </select>
+    
+<!--    分步查询包含list的dept-->
+    <resultMap id="deptStep" type="com.gg.mybatis.bean.Dept">
+        <id column="id" property="deptNO"/>
+        <result column="dept" property="deptName"/>
+        <collection property="list" select="com.gg.mybatis.dao.EmployeeMapper.getEmpByDeptId"
+                    column="deptI=id" fetchType="lazy"/>
+    </resultMap>
+    <select id="getDeptByIdStep" resultMap="deptStep">
+        select * from tab1_dept where id = #{id}
+    </select>
+
+
+
+    
+</mapper>

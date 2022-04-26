@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+       xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring
+        http://mybatis.org/schema/mybatis-spring-1.2.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.0.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+    <!-- 数据源 -->
+    <context:property-placeholder location="classpath:dbconfig.properties"/>
+    <bean id="dataSource"
+          class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="${jdbc.driver}"/>
+        <property name="jdbcUrl" value="${jdbc.url}"/>
+        <property name="user" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+    <!-- 事务管理器 -->
+    <bean id="dataSourceTransactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!-- 基于注解的事务管理 -->
+    <tx:annotation-driven
+            transaction-manager="dataSourceTransactionManager"/>
+    <!-- 配置 SqlSessionFactoryBean -->
+    <bean id="sqlSessionFactoryBean" class="com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean">
+        <!-- 数据源 -->
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:mybatis.xml"/>
+        <!-- 别名处理 -->
+        <property name="typeAliasesPackage" value="com.gg.bean"/>
+        <property name="globalConfig" ref="configuration"/>
+    </bean>
+<!--    mybatisPlus的全局配置文件-->
+    <bean id="configuration" class="com.baomidou.mybatisplus.entity.GlobalConfiguration">
+<!--    驼峰命名法，默认是true-->
+         <property name="dbColumnUnderline" value="false"/>
+<!--     配置默认主键策略，0 表示自增，对javaBean中的id属性起作用-->
+         <property name="idType" value="0"/>
+    </bean>
+    <!--
+    配置 mybatis 扫描 mapper 接口的路径
+    -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.gg.mapper"/>
+    </bean>
+
+</beans>
